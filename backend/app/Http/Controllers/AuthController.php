@@ -17,13 +17,7 @@ class AuthController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => [
-                'required',
-                'string',
-                'min:8', // Password must be at least 8 characters
-                'confirmed', // Ensure password confirmation matches
-                'regex:/^[a-zA-Z0-9]+$/', // Password must be alphanumeric
-            ],
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         // Create a new user record

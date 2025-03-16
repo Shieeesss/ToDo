@@ -11,11 +11,13 @@ class ToDo extends Model
 {
     use HasFactory;
 
+    protected $table = 'to_dos'; // Specify the correct table name
+
     protected $fillable = [
         'title',
         'description',
-        'deadline',
         'is_completed',
+        'deadline',
         'user_id',
     ];
 

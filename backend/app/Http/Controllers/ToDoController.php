@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ToDoController extends Controller {
     public function index() {
-        $todos = ToDo::where('user_id', auth()->id())->get(['id', 'title', 'description', 'date', 'deadline', 'created_at', 'updated_at']);
+        $todos = ToDo::where('user_id', auth()->id())->get(['id', 'title', 'description', 'is_completed', 'deadline', 'created_at', 'updated_at']);
         return response()->json($todos);
     }
 
@@ -16,7 +16,7 @@ class ToDoController extends Controller {
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'date' => 'required|date', // Validate the date field
+            'is_completed' => 'boolean',
             'deadline' => 'nullable|date', // Validate the deadline field
         ]);
 
@@ -24,7 +24,7 @@ class ToDoController extends Controller {
             $todo = ToDo::create([
                 'title' => $request->title,
                 'description' => $request->description,
-                'date' => $request->date,
+                'is_completed' => $request->is_completed ?? false,
                 'deadline' => $request->deadline,
                 'user_id' => auth()->id(),
             ]);
@@ -41,17 +41,17 @@ class ToDoController extends Controller {
         $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
-            'date' => 'sometimes|required|date', // Validate the date field
+            'is_completed' => 'boolean',
             'deadline' => 'nullable|date', // Validate the deadline field
         ]);
 
         $todo = ToDo::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
-        $todo->update($request->only(['title', 'description', 'date', 'deadline']));
+        $todo->update($request->only(['title', 'description', 'is_completed', 'deadline']));
         return response()->json($todo);
     }
 
     public function destroy($id) {
-        $todo = ToDo::find($id);
+        $todo = ToDo::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
 
         if (!$todo) {
             return response()->json(['message' => 'Todo not found'], 404);

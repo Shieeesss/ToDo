@@ -10,12 +10,12 @@ class CreateTodosTable extends Migration
 {
     public function up()
     {
-        Schema::create('todos', function (Blueprint $table) {
+        Schema::create('to_dos', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->date('deadline');
             $table->boolean('is_completed')->default(false);
+            $table->date('deadline')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
@@ -23,7 +23,7 @@ class CreateTodosTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('todos');
+        Schema::dropIfExists('to_dos');
     }
 }
 

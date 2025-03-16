@@ -12,7 +12,8 @@ import { z } from "zod";
 // Define the Zod schema for validation
 const schema = z
   .object({
-    name: z.string().min(1, "Name is required"),
+    first_name: z.string().min(1, "First name is required"),
+    last_name: z.string().min(1, "Last name is required"),
     email: z.string().email("Invalid email address").min(1, "Email is required"),
     password: z
       .string()
@@ -25,7 +26,6 @@ const schema = z
     path: ["password_confirmation"],
   });
 
-
 type FormData = z.infer<typeof schema>;
 
 export default function RegisterPage() {
@@ -34,7 +34,7 @@ export default function RegisterPage() {
   // Initialize react-hook-form with Zod validation
   const { mutate, isPending, error } = useMutation({
     mutationFn: (data: FormData) =>
-      register(data.name, data.email, data.password, data.password_confirmation),
+      register(data.first_name, data.last_name, data.email, data.password, data.password_confirmation),
     onSuccess: () => {
       router.push("/dashboard");
     },
@@ -66,20 +66,32 @@ export default function RegisterPage() {
         <div className="flex justify-center mb-6">
           <img className="w-24 h-auto" src="/logo.png" alt="Logo" />
         </div>
-        <h1 className="text-xl font-bold text-[#4D869C] text-center">Register</h1>
+        <h1 className="text-xl font-bold text-[#4D869C] text-center">Register Page</h1>
         {error && <p className="text-red-500 text-center">{(error as Error).message}</p>}
   
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
-          {/* Name Input */}
+          {/* First Name Input */}
           <div>
-            <label className="block text-sm font-medium text-[#4D869C]">Name</label>
+            <label className="block text-sm font-medium text-[#4D869C]">First Name</label>
             <input
               type="text"
-              placeholder="Your Name"
-              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.name ? "border-red-500" : ""}`}
-              {...formRegister("name")}
+              placeholder="First Name"
+              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.first_name ? "border-red-500" : ""}`}
+              {...formRegister("first_name")}
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name.message}</p>}
+          </div>
+
+          {/* Last Name Input */}
+          <div>
+            <label className="block text-sm font-medium text-[#4D869C]">Last Name</label>
+            <input
+              type="text"
+              placeholder="Last Name"
+              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.last_name ? "border-red-500" : ""}`}
+              {...formRegister("last_name")}
+            />
+            {errors.last_name && <p className="text-red-500 text-sm">{errors.last_name.message}</p>}
           </div>
   
           {/* Email Input */}
@@ -169,5 +181,4 @@ export default function RegisterPage() {
       </div>
     </section>
   );
-  
 }

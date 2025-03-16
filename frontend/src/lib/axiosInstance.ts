@@ -1,5 +1,5 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 // Function to retrieve token from cookies
 const getAuthToken = (): string | undefined => {

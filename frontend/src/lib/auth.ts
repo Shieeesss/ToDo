@@ -40,7 +40,8 @@ export const login = async (email: string, password: string) => {
 };
 
 export const register = async (
-  name: string,
+  first_name: string,
+  last_name: string,
   email: string,
   password: string,
   passwordConfirmation: string
@@ -53,7 +54,8 @@ export const register = async (
   try {
     // Send the correct password_confirmation value to the backend
     const response = await axios.post<AuthResponse>("/auth/register", { 
-      name, 
+      first_name,
+      last_name,
       email, 
       password, // Send the password
       password_confirmation: passwordConfirmation // Send the confirmation password
