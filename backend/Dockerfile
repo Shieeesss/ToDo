@@ -1,3 +1,4 @@
+# Use official PHP image with Apache
 FROM php:8.2-fpm
 
 # Install system dependencies
@@ -27,21 +28,3 @@ EXPOSE 8000
 
 # Start Laravel
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
-# Use official Node.js image
-FROM node:18-alpine
-
-# Set working directory
-WORKDIR /app
-
-# Copy package.json and install dependencies
-COPY package.json package-lock.json ./
-RUN npm install
-
-# Copy everything else
-COPY . .
-
-# Expose port 3000
-EXPOSE 3000
-
-# Start Next.js
-CMD ["npm", "run", "dev"]
