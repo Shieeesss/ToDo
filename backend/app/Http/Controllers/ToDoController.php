@@ -2,63 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ToDo;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Services\ToDoService;
+use App\Http\Requests\StoreToDoRequest;
+use App\Http\Requests\UpdateToDoRequest;
 
-class ToDoController extends Controller {
-    public function index() {
-        $todos = ToDo::where('user_id', auth()->id())->get(['id', 'title', 'description', 'is_completed', 'deadline', 'created_at', 'updated_at']);
+class ToDoController extends Controller
+{
+    protected $toDoService;
+
+    public function __construct(ToDoService $toDoService)
+    {
+        $this->toDoService = $toDoService;
+    }
+
+    public function index()
+    {
+        $todos = $this->toDoService->getAllToDos();
         return response()->json($todos);
     }
 
-    public function store(Request $request) {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'is_completed' => 'boolean',
-            'deadline' => 'nullable|date', // Validate the deadline field
-        ]);
-
+    public function store(StoreToDoRequest $request)
+    {
         try {
-            $todo = ToDo::create([
-                'title' => $request->title,
-                'description' => $request->description,
-                'is_completed' => $request->is_completed ?? false,
-                'deadline' => $request->deadline,
-                'user_id' => auth()->id(),
-            ]);
-
+            $todo = $this->toDoService->createToDo($request);
             return response()->json($todo, 201);
         } catch (\Exception $e) {
-            // Log the error for debugging purposes
             \Log::error('Failed to create todo: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to create todo: ' . $e->getMessage()], 500);
         }
     }
 
-    public function update(Request $request, $id) {
-        $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'nullable|string',
-            'is_completed' => 'boolean',
-            'deadline' => 'nullable|date', // Validate the deadline field
-        ]);
-
-        $todo = ToDo::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
-        $todo->update($request->only(['title', 'description', 'is_completed', 'deadline']));
-        return response()->json($todo);
+    public function update(UpdateToDoRequest $request, $id)
+    {
+        try {
+            $todo = $this->toDoService->updateToDo($request, $id);
+            return response()->json($todo);
+        } catch (\Exception $e) {
+            \Log::error('Failed to update todo: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to update todo: ' . $e->getMessage()], 500);
+        }
     }
 
-    public function destroy($id) {
-        $todo = ToDo::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
-
-        if (!$todo) {
-            return response()->json(['message' => 'Todo not found'], 404);
+    public function destroy($id)
+    {
+        try {
+            $this->toDoService->deleteToDo($id);
+            return response()->json(['message' => 'Todo deleted successfully']);
+        } catch (\Exception $e) {
+            \Log::error('Failed to delete todo: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to delete todo: ' . $e->getMessage()], 500);
         }
-
-        $todo->delete();
-
-        return response()->json(['message' => 'Todo deleted successfully']);
     }
 }

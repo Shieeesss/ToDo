@@ -15,17 +15,17 @@ const todoSchema = z.object({
   deadline: z.string().min(1, "Deadline is required"), // Make deadline required
 });
 
-export function useCreateTodo() {
+export function useCreateTodo(onSuccess: () => void) {
   const queryClient = useQueryClient();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [titleCharCount, setTitleCharCount] = useState(0);
   const [descCharCount, setDescCharCount] = useState(0);
+  const [isSubmittingState, setIsSubmitting] = useState(false);
 
   // Initialize react-hook-form with Zod schema validation
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting: isSubmittingForm },
     reset,
   } = useForm({
     resolver: zodResolver(todoSchema),
@@ -38,20 +38,25 @@ export function useCreateTodo() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] }); // Invalidate todos query to refresh the list
       reset(); // Reset the form fields
+      onSuccess(); // Call the onSuccess callback after the task is successfully added
     },
     onSettled: () => setIsSubmitting(false), // Set submitting state to false when mutation is settled
   });
 
   // Handle form submission
-  const onSubmit = (data: { title: string; description?: string; deadline: string }) => {
-    mutation.mutate({ title: data.title, description: data.description || "", deadline: data.deadline, date: new Date().toISOString() });
+  const onSubmit = async (data: { title: string; description?: string; deadline: string }) => {
+    try {
+      mutation.mutate({ title: data.title, description: data.description || "", deadline: data.deadline, date: new Date().toISOString() });
+    } catch (error) {
+      console.error("Failed to create task", error);
+    }
   };
 
   return {
     register, // Register form fields
     handleSubmit, // Handle form submission
     errors, // Form validation errors
-    isSubmitting, // Submitting state
+    isSubmitting: isSubmittingState || isSubmittingForm, // Submitting state
     titleCharCount, // Character count for title
     setTitleCharCount, // Set character count for title
     descCharCount, // Character count for description

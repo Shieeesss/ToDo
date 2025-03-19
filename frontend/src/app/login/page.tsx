@@ -33,18 +33,23 @@ export default function LoginPage() {
     resolver: zodResolver(schema),
   });
 
-  const { mutate, isPending, error } = useMutation({
+  const { mutate, isPending, error: mutationError } = useMutation({
     mutationFn: (data: FormData) => login(data.email, data.password),
     onSuccess: () => {
       router.push("/dashboard");
     },
+    onError: (error: any) => {
+      setError(error.message);
+    },
   });
 
   const onSubmit = (data: FormData) => {
+    setError(null); // Clear previous errors
     mutate(data);
   };
 
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -58,7 +63,7 @@ export default function LoginPage() {
         </div>
         <h1 className="text-xl font-bold text-[#4D869C] text-center">Sign in</h1>
         
-        {error && <p className="text-red-500 text-center">{(error as Error).message}</p>}
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
           {/* Email Input */}

@@ -13,7 +13,7 @@ export default function ToDoForm({ closeForm }: { closeForm: () => void }) {
     descCharCount,
     setDescCharCount,
     onSubmit,
-  } = useCreateTodo();
+  } = useCreateTodo(closeForm);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">

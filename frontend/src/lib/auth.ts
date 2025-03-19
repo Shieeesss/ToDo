@@ -28,10 +28,13 @@ export const login = async (email: string, password: string) => {
     return response.data;
   } catch (error: any) {
     if (error.response) {
-      if (error.response.status === 401) {
-        throw new Error(error.response.data.error);
-      } else if (error.response.status === 422) {
-        throw new Error(error.response.data.message);
+      if (error.response.status === 401 || error.response.status === 422) {
+        const errorMessage = error.response.data.error;
+        if (errorMessage.email) {
+          throw new Error(errorMessage.email[0]);
+        } else if (errorMessage.password) {
+          throw new Error(errorMessage.password[0]);
+        }
       } else if (error.response.status === 500) {
         throw new Error("Internal server error. Please try again later.");
       }
