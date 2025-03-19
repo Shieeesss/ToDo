@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ToDoList from "../../components/ToDolist";
 import ToDoForm from "../../components/ToDoForm";
 import LoadingSpinner from "../../components/LoadingSpinner";
+// Remove the import for Notifications component
+// import Notifications from "../../components/Notifications"; 
 import { Menu, MenuButton, MenuItem, MenuItems, Dialog } from '@headlessui/react';
 import { ChevronDownIcon, PlusIcon, XMarkIcon, Bars3Icon } from "@heroicons/react/20/solid";
 
@@ -147,6 +149,9 @@ const Dashboard: React.FC = () => {
           </div>
         </Dialog.Panel>
       </Dialog>
+
+      {/* Remove Notifications component */}
+      {/* <Notifications /> */}
     </QueryClientProvider>
   );
 };
