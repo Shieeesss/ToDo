@@ -3,13 +3,15 @@
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
+use function Pest\Laravel\postJson;
+use function Pest\Laravel\actingAs;
+
 uses(RefreshDatabase::class);
 
-it('can register a user', function () {
-    $response = $this->postJson('/api/register', [
-        'name' => 'Test User',
+it('registers a user', function () {
+    $response = postJson('/api/auth/register', [
+        'first_name' => 'Test',
+        'last_name' => 'User',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
@@ -19,13 +21,13 @@ it('can register a user', function () {
              ->assertJsonStructure(['token']);
 });
 
-it('can login a user', function () {
+it('logs in a user', function () {
     $user = User::factory()->create([
         'email' => 'test@example.com',
         'password' => Hash::make('password'),
     ]);
 
-    $response = $this->postJson('/api/login', [
+    $response = postJson('/api/auth/login', [
         'email' => 'test@example.com',
         'password' => 'password',
     ]);
@@ -34,14 +36,9 @@ it('can login a user', function () {
              ->assertJsonStructure(['token']);
 });
 
-it('cannot login with invalid credentials', function () {
-    $user = User::factory()->create([
-        'email' => 'test@example.com',
-        'password' => Hash::make('password'),
-    ]);
-
-    $response = $this->postJson('/api/login', [
-        'email' => 'test@example.com',
+it('fails to log in with invalid credentials', function () {
+    $response = postJson('/api/auth/login', [
+        'email' => 'wrong@example.com',
         'password' => 'wrongpassword',
     ]);
 
@@ -49,26 +46,45 @@ it('cannot login with invalid credentials', function () {
              ->assertJsonStructure(['error']);
 });
 
-it('can logout a user', function () {
+it('logs out a user', function () {
     $user = User::factory()->create();
-    $token = Auth::login($user);
+    $token = $user->createToken('authToken')->plainTextToken;
 
-    $response = $this->postJson('/api/logout', [], [
-        'Authorization' => "Bearer $token"
-    ]);
+    $response = actingAs($user)->postJson('/api/auth/logout');
 
     $response->assertStatus(200)
              ->assertJson(['message' => 'Logged out']);
 });
 
-it('can get authenticated user', function () {
+it('gets the authenticated user', function () {
     $user = User::factory()->create();
-    $token = Auth::login($user);
+    $token = $user->createToken('authToken')->plainTextToken;
 
-    $response = $this->getJson('/api/me', [
-        'Authorization' => "Bearer $token"
-    ]);
+    $response = actingAs($user)->getJson('/api/auth/me');
 
     $response->assertStatus(200)
-             ->assertJsonStructure(['id', 'name', 'email']);
+             ->assertJson(['id' => $user->id, 'email' => $user->email]);
+});
+
+it('prevents registration with invalid data', function () {
+    $response = postJson('/api/auth/register', [
+        'first_name' => '',
+        'last_name' => '',
+        'email' => 'invalid-email',
+        'password' => 'short',
+        'password_confirmation' => 'different',
+    ]);
+
+    $response->assertStatus(422)
+             ->assertJsonStructure(['errors']);
+});
+
+it('prevents login with invalid data', function () {
+    $response = postJson('/api/auth/login', [
+        'email' => 'invalid-email',
+        'password' => '',
+    ]);
+
+    $response->assertStatus(422)
+             ->assertJsonStructure(['errors']);
 });
