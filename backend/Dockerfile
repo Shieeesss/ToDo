@@ -1,8 +1,17 @@
 # Use official PHP image with Apache
 FROM php:8.2-fpm
 
+# Set proxy settings if needed
+# ENV http_proxy http://your-proxy-server:port
+# ENV https_proxy http://your-proxy-server:port
+
+# Use a different mirror
+RUN if [ -f /etc/apt/sources.list ]; then \
+      sed -i 's|http://deb.debian.org/debian|http://ftp.us.debian.org/debian|g' /etc/apt/sources.list; \
+    fi
+
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update --fix-missing && apt-get install -y \
     libpng-dev \
     zip \
     unzip \

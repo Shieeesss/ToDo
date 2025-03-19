@@ -22,6 +22,7 @@
         "next": "15.2.1",
         "next-auth": "^4.24.11",
         "react": "^19.0.0",
+        "react-calendar": "^5.1.0",
         "react-dom": "^19.0.0",
         "react-hook-form-resolvers": "^0.0.1",
         "zod": "^3.24.2"
@@ -33,6 +34,7 @@
         "@types/js-cookie": "^3.0.6",
         "@types/node": "^20",
         "@types/react": "^19",
+        "@types/react-calendar": "^4.1.0",
         "@types/react-dom": "^19",
         "autoprefixer": "^10.4.21",
         "eslint": "^9.21.0",

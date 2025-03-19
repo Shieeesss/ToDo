@@ -7,7 +7,7 @@ const getAuthToken = (): string | undefined => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL, // Set API URL in .env file
+  baseURL: 'http://localhost:8000/api', // Ensure this URL is correct
   withCredentials: true, // This ensures cookies are sent with the request
   headers: {
     "Content-Type": "application/json",

@@ -1,51 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createTodo } from "../lib/auth";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-// Define Zod schema for validation
-const todoSchema = z.object({
-  title: z.string().min(1, "Title is required").max(50, "Title is too long! Maximum of 50 characters."),
-  description: z.string()
-    .max(300, "Description cannot exceed 300 characters")
-    .optional() // ✅ Makes it optional
-    .default(""), // ✅ Defaults to an empty string if not provided
-  deadline: z.string().min(1, "Deadline is required"), // Make deadline required
-});
+import { useCreateTodo } from "../logics/useCreateTodo";
 
 export default function ToDoForm({ closeForm }: { closeForm: () => void }) {
-  const queryClient = useQueryClient();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [titleCharCount, setTitleCharCount] = useState(0);
-  const [descCharCount, setDescCharCount] = useState(0);
-
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: zodResolver(todoSchema),
-  });
-
-  const mutation = useMutation({
-    mutationFn: createTodo,
-    onMutate: () => setIsSubmitting(true),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-      reset();
-      closeForm();
-    },
-    onSettled: () => setIsSubmitting(false),
-  });
-
-  const onSubmit = (data: { title: string; description?: string; deadline: string }) => {
-    mutation.mutate({ title: data.title, description: data.description || "", deadline: data.deadline, date: new Date().toISOString() });
-  };
+    errors,
+    isSubmitting,
+    titleCharCount,
+    setTitleCharCount,
+    descCharCount,
+    setDescCharCount,
+    onSubmit,
+  } = useCreateTodo();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">

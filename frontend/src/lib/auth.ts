@@ -32,6 +32,8 @@ export const login = async (email: string, password: string) => {
         throw new Error(error.response.data.error);
       } else if (error.response.status === 422) {
         throw new Error(error.response.data.message);
+      } else if (error.response.status === 500) {
+        throw new Error("Internal server error. Please try again later.");
       }
     }
     console.error("Login failed:", error);
