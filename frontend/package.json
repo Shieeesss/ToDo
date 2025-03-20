@@ -19,12 +19,14 @@
         "flowbite-react": "^0.10.2",
         "js-cookie": "^3.0.5",
         "jsonwebtoken": "^9.0.2",
+        "lottie-web": "^5.12.2",
         "next": "15.2.1",
         "next-auth": "^4.24.11",
         "react": "^19.0.0",
         "react-calendar": "^5.1.0",
         "react-dom": "^19.0.0",
         "react-hook-form-resolvers": "^0.0.1",
+        "react-lottie": "^1.2.10",
         "zod": "^3.24.2"
     },
     "devDependencies": {
@@ -38,6 +40,7 @@
         "@types/react": "^19",
         "@types/react-calendar": "^4.1.0",
         "@types/react-dom": "^19",
+        "@types/react-lottie": "^1.2.10",
         "autoprefixer": "^10.4.21",
         "eslint": "^9.21.0",
         "eslint-config-next": "^15.2.1",

@@ -56,25 +56,31 @@ export default function LoginPage() {
   };
 
   return (
-    <section className="bg-gray-500 min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-        <div className="flex justify-center mb-6">
+<section className="bg-gradient-to-b from-[#7AB2B2] to-[#4D869C] min-h-screen flex items-center justify-center">
+      <div className="w-full h-full max-w-md bg-white rounded-lg shadow-md p-5 flex flex-col justify-center">
+        <div className="flex justify-center mb-3">
           <img className="w-24 h-auto" src="/logo.png" alt="Logo" />
         </div>
         <h1 className="text-xl font-bold text-[#4D869C] text-center">Sign in</h1>
         
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-center text-red-700 px-4 py-3 rounded relative mt-4 mb-3" role="alert">
+            <strong className="font-bold">
+            <span className="block sm:inline">{error}</span>
+            </strong>
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-3 space-y-4">
           {/* Email Input */}
           <div>
-            <label className="block text-sm font-medium text-[#4D869C]">Email</label>
+            
             <input
               type="email"
               className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${
                 errors.email ? "border-red-500" : ""
-              }`}
-              placeholder="name@company.com"
+              } placeholder-gray-600`}
+              placeholder="Email"
               {...register("email")}
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
@@ -82,14 +88,14 @@ export default function LoginPage() {
 
           {/* Password Input */}
           <div>
-            <label className="block text-sm font-medium text-[#4D869C]">Password</label>
+            
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${
+                className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C]${
                   errors.password ? "border-red-500" : ""
-                }`}
-                placeholder="••••••••"
+                } placeholder-gray-600`}
+                placeholder="Password"
                 {...register("password")}
               />
               <button
@@ -98,12 +104,12 @@ export default function LoginPage() {
                 className="absolute right-4 top-1/2 transform -translate-y-1/2"
               >
                 {showPassword ? (
-                  <svg className="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" strokeWidth="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z" />
                     <path stroke="currentColor" strokeWidth="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                   </svg>
                 ) : (
-                  <svg className="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                   </svg>
                 )}
@@ -123,12 +129,13 @@ export default function LoginPage() {
 
           <p className="text-sm text-gray-700 text-center">
             Don’t have an account yet?{" "}
-            <a href="/register" className="font-medium text-[#4D869C] hover:underline">
+            <a href="/register" className="font-medium text-blue-500 hover:underline">
               Sign up
             </a>
           </p>
         </form>
       </div>
     </section>
+    
   );
 }

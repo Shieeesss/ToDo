@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // Use next/navigation for client-side routing
-import { fetchUserData, logout } from "../../lib/auth"; // Path to your auth lib
+import { useRouter } from "next/navigation"; 
+import { fetchUserData, logout } from "../../lib/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ToDoList from "../../components/ToDolist";
 import ToDoForm from "../../components/ToDoForm";
 import LoadingSpinner from "../../components/LoadingSpinner";
-// Remove the import for Notifications component
-// import Notifications from "../../components/Notifications"; 
 import { Menu, MenuButton, MenuItem, MenuItems, Dialog } from '@headlessui/react';
 import { ChevronDownIcon, PlusIcon, XMarkIcon, Bars3Icon } from "@heroicons/react/20/solid";
 
@@ -42,7 +40,7 @@ const Dashboard: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    router.push("/login"); // Redirect to login page after logout
+    router.push("/login"); 
   };
 
   const confirmLogout = () => {
@@ -121,37 +119,31 @@ const Dashboard: React.FC = () => {
       <Dialog
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gray-500 bg-opacity-50 backdrop-blur-md"
+        className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gray-400 bg-opacity-80 backdrop-blur-sm"
       >
         <Dialog.Panel className="relative bg-white rounded-lg p-6 shadow-lg mx-4 sm:mx-0 max-w-lg w-full">
           <button onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
             <XMarkIcon className="w-5 h-5" />
           </button>
-          <h2 className="text-xl font-bold mb-4 text-[#4D869C]">Add New Task</h2>
+          <h2 className="text-xl font-bold mb-4 text-center text-[#4D869C]">Add New Task</h2>
           <ToDoForm closeForm={() => setIsModalOpen(false)} />
         </Dialog.Panel>
       </Dialog>
 
       {/* Modal for logout confirmation */}
-      <Dialog open={isLogoutModalOpen} onClose={closeLogoutModal} className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gray-500 bg-opacity-30 backdrop-blur-md">
-        <Dialog.Panel className="relative bg-white rounded-lg p-6 shadow-lg mx-4 sm:mx-0 max-w-lg w-full">
-          <button onClick={closeLogoutModal} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-            <XMarkIcon className="w-5 h-5" />
-          </button>
-          <h2 className="text-xl font-bold mb-4">Are you sure you want to log out?</h2>
+      <Dialog open={isLogoutModalOpen} onClose={closeLogoutModal} className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gray-200 bg-opacity-30 backdrop-blur-md">
+        <Dialog.Panel className="relative bg-white border border-gray-500 rounded-lg p-6 shadow-lg mx-4 sm:mx-0 max-w-lg w-full">
+          <h2 className="text-xl font-bold text-center mb-4">Are you sure you want to log out?</h2>
           <div className="flex justify-center space-x-4">
-            <button onClick={closeLogoutModal} className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
+            <button onClick={closeLogoutModal} className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-300">
               Cancel
             </button>
-            <button onClick={confirmLogout} className="px-4 py-2 bg-[#4F959D] text-white rounded-md">
+            <button onClick={confirmLogout} className="px-4 py-2 bg-red-500 text-white rounded-md">
               Log Out
             </button>
           </div>
         </Dialog.Panel>
       </Dialog>
-
-      {/* Remove Notifications component */}
-      {/* <Notifications /> */}
     </QueryClientProvider>
   );
 };

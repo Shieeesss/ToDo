@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingSpinner from "./LoadingSpinner";
+import { FaTasks } from "react-icons/fa";
 import Calendar, { CalendarProps } from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useTodos } from "../logics/todoLogic"; // Import the logic
@@ -33,7 +34,13 @@ export default function ToDoList() {
   const [descCharCount, setDescCharCount] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
-
+  const [isDateFocused, setIsDateFocused] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [todoToComplete, setTodoToComplete] = useState<any | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [todoToDelete, setTodoToDelete] = useState<any | null>(null);
+  
   const { todos, isPending, deleteMutation, updateMutation } = useTodos(filter, sortBy, searchQuery);
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
@@ -95,7 +102,45 @@ export default function ToDoList() {
       setSelectedDate(value);
     }
   };
+  // Handle checkbox click
+  const handleCheckboxClick = (todo: any) => {
+    setTodoToComplete(todo);
+    setIsConfirmModalOpen(true);
+  };
 
+  // Confirm completion
+  const confirmCompletion = () => {
+    if (todoToComplete) {
+      updateMutation.mutate({ id: todoToComplete.id, updates: { is_completed: !todoToComplete.is_completed, deadline: todoToComplete.deadline, date: todoToComplete.date } });
+      setIsConfirmModalOpen(false);
+      setTodoToComplete(null);
+    }
+  };
+// Handle delete button click
+const handleDeleteClick = (todo: any) => {
+  setTodoToDelete(todo);
+  setIsDeleteModalOpen(true);
+};
+
+// Confirm deletion
+const confirmDeletion = () => {
+  if (todoToDelete) {
+    deleteMutation.mutate(todoToDelete.id);
+    setIsDeleteModalOpen(false);
+    setTodoToDelete(null);
+  }
+};
+
+// Cancel deletion
+const cancelDeletion = () => {
+  setIsDeleteModalOpen(false);
+  setTodoToDelete(null);
+};
+  // Cancel completion
+  const cancelCompletion = () => {
+    setIsConfirmModalOpen(false);
+    setTodoToComplete(null);
+  };
   if (isPending) return <LoadingSpinner />;
 
   // Filter todos based on the selected filter
@@ -231,13 +276,13 @@ export default function ToDoList() {
             <div
               key={todo.id}
               className={`relative break-inside-avoid w-full p-4 rounded-lg shadow-lg border-2 border-black-300 bg-white flex flex-col 
-                ${todo.is_completed ? "bg-green-100 border-green-500" : isOverdue ? "bg-orange-100 border-red-500" : "bg-[#e6ecff] border-[#668cff]"}
-              `}
+                          ${todo.is_completed ? "bg-green-100 border-green-500" : isOverdue ? "bg-orange-100 border-red-500" : "bg-[#e6ecff] border-[#668cff]"}
+                        `}
             >
               {/* Top Section: Status & Actions */}
               <div className="flex relative items-center justify-between w-full absolute left-2 right-2">
                 <span className={`text-[10px] font-semibold px-3 py-1 rounded-full 
-                  ${todo.is_completed ? "bg-green-200 text-green-600" : isOverdue ? "bg-red-200 text-red-500" : "bg-[#668cff] text-white"}`}>
+                            ${todo.is_completed ? "bg-green-200 text-green-600" : isOverdue ? "bg-red-200 text-red-500" : "bg-[#668cff] text-white"}`}>
                   {todo.is_completed ? "Completed" : isOverdue ? "Overdue" : "Pending"}
                 </span>
 
@@ -245,7 +290,7 @@ export default function ToDoList() {
                   <input
                     type="checkbox"
                     checked={todo.is_completed}
-                    onChange={() => updateMutation.mutate({ id: todo.id, updates: { is_completed: !todo.is_completed, deadline: todo.deadline, date: todo.date } })}
+                    onChange={() => handleCheckboxClick(todo)}
                     className="w-4 h-4 text-blue-600 bg-white-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-white-800 focus:ring-2 dark:bg-white-700 dark:border-white-600"
                   />
 
@@ -265,12 +310,12 @@ export default function ToDoList() {
                         Edit
                       </button>
                       <button
-                        onClick={() => deleteMutation.mutate(todo.id)}
-                        className="flex items-center w-full px-3 py-2 text-sm text-red-500 hover:bg-gray-100"
-                        disabled={deleteMutation.isPending} // Disable button while mutation is in progress
-                      >
-                        {deleteMutation.isPending ? "Deleting..." : "Delete"}
-                      </button>
+  onClick={() => handleDeleteClick(todo)}
+  className="flex items-center w-full px-3 py-2 text-sm text-red-500 hover:bg-gray-100"
+  disabled={deleteMutation.isPending}
+>
+  {deleteMutation.isPending ? "Deleting..." : "Delete"}
+</button>
                     </div>
                   </div>
                 </div>
@@ -292,9 +337,8 @@ export default function ToDoList() {
 
                 {/* Task Description - Full Text & Expands */}
                 <span
-                  className={`text-xs italic font-mono mt-2 w-full leading-relaxed border-l-4 pl-2 bg-gray-50 break-words border-b-2 border-black ${
-                    todo.is_completed ? "border-green-500" : isOverdue ? "border-red-500" : "border-blue-500"
-                  }`}
+                  className={`text-xs italic font-mono mt-2 w-full leading-relaxed border-l-4 pl-2 bg-gray-50 break-words border-b-2 border-black ${todo.is_completed ? "border-green-500" : isOverdue ? "border-red-500" : "border-blue-500"
+                    }`}
                 >
                   {highlightText(todo.description || "No description available", searchQuery)}
                 </span>
@@ -316,52 +360,126 @@ export default function ToDoList() {
         })}
       </div>
 
-      {/* Modal */}
+      {/* Modal for complete */}
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-500 bg-opacity-80 backdrop-blur-md p-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md border border-gray-300">
+            <h2 className="text-xl mb-4 text-[#4D869C]">Confirm Completion</h2>
+            <p className="mb-4">Are you sure you want to mark this task as complete?</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={cancelCompletion}
+                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmCompletion}
+                className="bg-[#205781] hover:bg-[#4F959D] text-white py-2 px-4 rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-[#CDE8E5]"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+            {/* Modal for Delete */}
+{isDeleteModalOpen && (
+  <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-500 bg-opacity-80 backdrop-blur-md p-4">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md border border-gray-300">
+      <h2 className="text-xl mb-4 text-[#4D869C]">Confirm Deletion</h2>
+      <p className="mb-4">Are you sure you want to delete this task?</p>
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={cancelDeletion}
+          className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-gray-300"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={confirmDeletion}
+          className="bg-[#205781] hover:bg-[#4F959D] text-white py-2 px-4 rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-[#CDE8E5]"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+      {/* Modal for Edit */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-80">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl mb-4">Edit Todo</h2>
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-400 bg-opacity-80 backdrop-blur-sm p-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md border border-gray-300">
+            <h2 className="text-xl mb-4 text-[#4D869C]">Edit Todo</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-              
-              {/* Title Input with Label and Character Counter */}
-              <label className="text-sm font-semibold text-gray-700">Title</label>
-              <input
-                type="text"
-                {...register("title")}
-                className="border p-2 rounded mb-1"
-                placeholder="Update title"
-                onChange={(e) => setTitleCharCount(e.target.value.length)}
-                maxLength={50} // Optional
-              />
-              {errors.title && <span className="text-red-500">{errors.title.message}</span>}
-              <div className="text-gray-500 text-xs text-right">{titleCharCount}/50</div>
-
-              {/* Description Input with Label and Character Counter */}
-              <label className="text-sm font-semibold text-gray-700">Description</label>
-              <textarea
-                {...register("description")}
-                className="border p-2 rounded mb-1"
-                placeholder="Update description"
-                onChange={(e) => setDescCharCount(e.target.value.length)}
-                maxLength={300} // Optional
-              />
-              {errors.description && <span className="text-red-500">{errors.description.message}</span>}
-              <div className="text-gray-500 text-xs text-right">{descCharCount}/300</div>
-
-              {/* Deadline Input with Label */}
-              <label className="text-sm font-semibold text-gray-700">Deadline</label>
-              <input
-                type="date"
-                {...register("deadline")}
-                className="border p-2 rounded mb-1"
-                placeholder="Update deadline"
-              />
-              {errors.deadline && <span className="text-red-500">{errors.deadline.message}</span>}
-
-              <div className="flex justify-between mt-2">
-                <button type="submit" className="bg-green-500 text-white px-3 py-1 rounded">Save</button>
-                <button type="button" onClick={handleCancel} className="text-gray-600">Cancel</button>
+              {/* Title Input with Character Counter */}
+              <div className="flex flex-col">
+                <label htmlFor="title" className="text-gray-700 font-medium mb-1">Task Title</label>
+                <div className="relative">
+                  <input
+                    id="title"
+                    {...register("title")}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#4D869C] focus:border-[#4D869C] placeholder-gray-600"
+                    onChange={(e) => setTitleCharCount(e.target.value.length)}
+                    maxLength={50}
+                  />
+                  <FaTasks className="absolute right-3 top-3 text-gray-400" />
+                </div>
+                {errors.title && <span className="text-red-500 text-sm mt-1">{errors.title.message}</span>}
+                <div className="text-gray-500 text-xs text-right mt-1">{titleCharCount}/50</div>
               </div>
+
+              {/* Description Input with Character Counter */}
+              <div className="flex flex-col">
+                <label htmlFor="description" className="text-gray-700 font-medium mb-1">Task Description (optional)</label>
+                <textarea
+                  id="description"
+                  {...register("description")}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#4D869C] focus:border-[#4D869C] placeholder-gray-600"
+                  onChange={(e) => setDescCharCount(e.target.value.length)}
+                  maxLength={300}
+                />
+                {errors.description && <span className="text-red-500 text-sm mt-1">{errors.description.message}</span>}
+                <div className="text-gray-500 text-xs text-right mt-1">{descCharCount}/300</div>
+              </div>
+
+              {/* Deadline Input */}
+              <div className="flex flex-col">
+                <label htmlFor="deadline" className="text-gray-700 font-medium mb-1">Deadline</label>
+                <div className="relative mb-6">
+                  <input
+                    id="deadline"
+                    type="date"
+                    {...register("deadline")}
+                    className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#4D869C] focus:border-[#4D869C] placeholder-gray-600 ${!isDateFocused && !errors.deadline ? "text-gray-400" : "text-gray-900"}`}
+                    defaultValue=""
+                    onFocus={() => setIsDateFocused(true)}
+                    onBlur={(e) => {
+                      setIsDateFocused(false);
+                      if (!e.target.value) {
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                </div>
+                {errors.deadline && <span className="text-red-500 text-sm mt-1">{errors.deadline.message}</span>}
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full bg-[#205781] hover:bg-[#4F959D] text-white py-2 rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-[#CDE8E5]"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Updating Task..." : "Update Task"}
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="w-full mt-2 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg font-medium focus:outline-none focus:ring-4 focus:ring-gray-300"
+              >
+                Cancel
+              </button>
             </form>
           </div>
         </div>

@@ -74,7 +74,7 @@ export const register = async (
     return response.data; // Return the data if successful
   } catch (error: any) {
     if (error.response && error.response.status === 422) {
-      throw new Error("Validation failed: " + error.response.data.message);
+      throw new Error(error.response.data.message);
     }
     console.error("Registration failed:", error);
     throw new Error("Registration failed User exist, please login again.");

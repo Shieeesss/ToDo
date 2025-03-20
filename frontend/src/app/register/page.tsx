@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { register } from "@/lib/auth";
 import { useRouter } from "next/navigation";
@@ -61,22 +60,27 @@ export default function RegisterPage() {
   };
 
   return (
-    <section className="bg-gray-500 min-h-screen flex items-center justify-center">
+<section className="bg-gradient-to-b from-[#7AB2B2] to-[#4D869C] min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-3">
           <img className="w-24 h-auto" src="/logo.png" alt="Logo" />
         </div>
-        <h1 className="text-xl font-bold text-[#4D869C] text-center">Register Page</h1>
-        {error && <p className="text-red-500 text-center">{(error as Error).message}</p>}
-  
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+        <h1 className="text-xl font-bold text-[#4D869C] text-center">Register</h1>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-center text-red-700 px-4 py-3 rounded relative mt-4 mb-4" role="alert">
+            <strong className="font-bold ">
+            <span className="block sm:inline">{(error as Error).message}</span>
+            </strong>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-3 space-y-4">
           {/* First Name Input */}
           <div>
-            <label className="block text-sm font-medium text-[#4D869C]">First Name</label>
             <input
               type="text"
               placeholder="First Name"
-              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.first_name ? "border-red-500" : ""}`}
+              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.first_name ? "border-red-500" : ""}  placeholder-gray-600`}
               {...formRegister("first_name")}
             />
             {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name.message}</p>}
@@ -84,51 +88,48 @@ export default function RegisterPage() {
 
           {/* Last Name Input */}
           <div>
-            <label className="block text-sm font-medium text-[#4D869C]">Last Name</label>
             <input
               type="text"
               placeholder="Last Name"
-              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.last_name ? "border-red-500" : ""}`}
+              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.last_name ? "border-red-500" : ""} placeholder-gray-600`}
               {...formRegister("last_name")}
             />
             {errors.last_name && <p className="text-red-500 text-sm">{errors.last_name.message}</p>}
           </div>
-  
+
           {/* Email Input */}
           <div>
-            <label className="block text-sm font-medium text-[#4D869C]">Email</label>
             <input
               type="email"
-              placeholder="name@company.com"
-              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.email ? "border-red-500" : ""}`}
+              placeholder="Email"
+              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.email ? "border-red-500" : ""} placeholder-gray-600`}
               {...formRegister("email")}
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
           </div>
-  
+
           {/* Password Input */}
           <div className="relative">
-            <label className="block text-sm font-medium text-[#4D869C]">Password</label>
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.password ? "border-red-500" : ""}`}
+              placeholder="Password"
+              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.password ? "border-red-500" : ""} placeholder-gray-600`}
               {...formRegister("password")}
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute right-4 top-9 transform -translate-y-1/2"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2"
             >
               {showPassword ? (
-                <svg className="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" strokeWidth="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z" />
-                <path stroke="currentColor" strokeWidth="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-              </svg>
+                <svg className="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" strokeWidth="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z" />
+                  <path stroke="currentColor" strokeWidth="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
               )}
             </button>
             {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
@@ -136,32 +137,31 @@ export default function RegisterPage() {
 
           {/* Confirm Password Input */}
           <div className="relative">
-            <label className="block text-sm font-medium text-[#4D869C]">Confirm Password</label>
             <input
               type={showConfirmPassword ? "text" : "password"}
-              placeholder="••••••••"
-              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.password_confirmation ? "border-red-500" : ""}`}
+              placeholder="Confirm Password"
+              className={`w-full px-4 py-2 border border-[#7AB2B2] rounded-lg bg-[#EEF7FF] text-gray-900 focus:ring-[#4D869C] focus:border-[#4D869C] ${errors.password_confirmation ? "border-red-500" : ""} placeholder-gray-600`}
               {...formRegister("password_confirmation")}
             />
             <button
               type="button"
               onClick={toggleConfirmPasswordVisibility}
-              className="absolute right-4 top-9 transform -translate-y-1/2"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2"
             >
               {showConfirmPassword ? (
-                <svg className="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" strokeWidth="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z" />
-                <path stroke="currentColor" strokeWidth="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-              </svg>
+                <svg className="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" strokeWidth="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z" />
+                  <path stroke="currentColor" strokeWidth="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
               )}
             </button>
             {errors.password_confirmation && <p className="text-red-500 text-sm">{errors.password_confirmation.message}</p>}
           </div>
-  
+
           {/* Submit Button */}
           <button
             type="submit"
@@ -170,10 +170,10 @@ export default function RegisterPage() {
           >
             {isPending ? "Registering..." : "Register"}
           </button>
-  
+
           <p className="text-sm text-gray-700 text-center">
-            Already have an account? {" "}
-            <a href="/login" className="font-medium text-[#4D869C] hover:underline">
+            Already have an account?{" "}
+            <a href="/login" className="font-medium text-blue-500 hover:underline">
               Sign in
             </a>
           </p>
