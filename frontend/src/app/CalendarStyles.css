@@ -1,0 +1,36 @@
+CalendarStyles.css.custom-calendar {
+    background-color: #f9fafb;
+    /* Light background color */
+    padding: 1rem;
+    /* Padding around the calendar */
+    border-radius: 0.5rem;
+    /* Rounded corners */
+}
+
+.custom-calendar .react-calendar__tile {
+    border-radius: 0.25rem;
+    /* Rounded corners for tiles */
+    transition: background-color 0.3s, color 0.3s;
+    /* Smooth transition for hover effects */
+}
+
+.custom-calendar .react-calendar__tile:hover {
+    background-color: #4D869C;
+    /* Background color on hover */
+    color: white;
+    /* Text color on hover */
+}
+
+.custom-calendar .react-calendar__tile--active {
+    background-color: #4D869C;
+    /* Background color for active date */
+    color: white;
+    /* Text color for active date */
+}
+
+.custom-calendar .react-calendar__tile--now {
+    background-color: #CDE8E5;
+    /* Background color for today's date */
+    color: black;
+    /* Text color for today's date */
+}

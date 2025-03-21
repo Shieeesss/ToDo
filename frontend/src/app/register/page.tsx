@@ -132,8 +132,9 @@ export default function RegisterPage() {
                 </svg>
               )}
             </button>
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+           
           </div>
+          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
 
           {/* Confirm Password Input */}
           <div className="relative">
@@ -159,8 +160,8 @@ export default function RegisterPage() {
                 </svg>
               )}
             </button>
-            {errors.password_confirmation && <p className="text-red-500 text-sm">{errors.password_confirmation.message}</p>}
           </div>
+          {errors.password_confirmation && <p className="text-red-500 text-sm">{errors.password_confirmation.message}</p>}
 
           {/* Submit Button */}
           <button
